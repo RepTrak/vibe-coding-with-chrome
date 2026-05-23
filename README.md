@@ -95,7 +95,13 @@ openssl req -x509 -newkey rsa:2048 -keyout server/key.pem -out server/cert.pem \
   -days 365 -nodes -subj "/CN=localhost"
 ```
 
-After starting the server, open `https://localhost:7681` in Chrome once and accept the certificate warning. Chrome will remember the exception.
+After starting the server, you must visit both URLs directly in Chrome **once** and accept the self-signed certificate warning for each:
+
+1. Open `https://localhost:7681` in a Chrome tab
+2. Click **Advanced** → **Proceed to localhost (unsafe)**
+3. Open `https://localhost:7682` in a Chrome tab and repeat
+
+Chrome will remember the exception for both ports. Without this step, the extension's iframe and the Send button will silently fail to connect.
 
 ---
 
