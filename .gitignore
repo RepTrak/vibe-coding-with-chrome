@@ -1,0 +1,17 @@
+# AI coding agent local config
+.claude/
+.codex/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
