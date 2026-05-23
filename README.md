@@ -17,7 +17,7 @@ Chrome Extension (side panel)
                                         │
                                    tmux session "main"
                                         │
-                                   zsh / claude / codex
+                                   zsh (macOS) / bash (Linux) / claude / codex
 ```
 
 - **ttyd** serves an interactive terminal over HTTPS on port `7681`
@@ -109,9 +109,11 @@ Chrome will remember the exception for both ports. Without this step, the extens
 
 Choose the session type you want:
 
-| Session | macOS | Linux | Windows |
+Scripts use **zsh** on macOS and **bash** on Linux and Windows (WSL2).
+
+| Session | macOS (zsh) | Linux (bash) | Windows — WSL2 (bash) |
 |---|---|---|---|
-| Plain zsh | `./start-server.sh` | `./start-server-linux.sh` | `start-server-windows.bat` |
+| Plain shell | `./start-server.sh` | `./start-server-linux.sh` | `start-server-windows.bat` |
 | Claude Code | `./start-claude-server.sh` | `./start-claude-server-linux.sh` | `start-claude-server-windows.bat` |
 | Codex CLI | `./start-codex-server.sh` | `./start-codex-server-linux.sh` | `start-codex-server-windows.bat` |
 
