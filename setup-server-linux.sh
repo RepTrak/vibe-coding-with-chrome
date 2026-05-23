@@ -31,13 +31,22 @@ pkg_install_cmd() {
   esac
 }
 
-# ttyd is in apt repos on Ubuntu 21.10+; otherwise snap is the safest fallback
+# ttyd is in apt repos on Ubuntu 21.10+; otherwise snap is the safest fallback.
+# On Arch, prefer yay/paru (AUR helpers) if available, then snap, then manual.
 ttyd_install_cmd() {
   local mgr=$1
-  if [[ $mgr == "apt" ]];    then echo "sudo apt-get install -y ttyd"
-  elif [[ $mgr == "pacman" ]]; then echo "yay -S ttyd"
-  elif command -v snap &>/dev/null; then echo "sudo snap install ttyd --classic"
-  else echo ""
+  if [[ $mgr == "apt" ]]; then
+    echo "sudo apt-get install -y ttyd"
+  elif [[ $mgr == "pacman" ]]; then
+    if command -v yay &>/dev/null; then echo "yay -S ttyd"
+    elif command -v paru &>/dev/null; then echo "paru -S ttyd"
+    elif command -v snap &>/dev/null; then echo "sudo snap install ttyd --classic"
+    else echo ""
+    fi
+  elif command -v snap &>/dev/null; then
+    echo "sudo snap install ttyd --classic"
+  else
+    echo ""
   fi
 }
 
@@ -92,7 +101,12 @@ for dep in "${MISSING[@]}"; do
       if command -v "$dep" &>/dev/null; then
         echo "  ${GREEN}[ok]  $dep installed successfully.${NC}"
       else
-        echo "  ${RED}Install may have failed. Try manually: $cmd${NC}"
+        # snap installs may not be on PATH until the terminal is restarted
+        if [[ $cmd == *"snap"* ]]; then
+          echo "  ${YELLOW}snap install completed. If '$dep' is not found, restart your terminal and re-run this script.${NC}"
+        else
+          echo "  ${RED}Install may have failed. Try manually: $cmd${NC}"
+        fi
       fi
     else
       echo "  Skipped. Run when ready:  $cmd"

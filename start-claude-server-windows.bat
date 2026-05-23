@@ -10,3 +10,4 @@ if errorlevel 1 (
 
 for /f "delims=" %%i in ('wsl wslpath "%~dp0"') do set WSL_DIR=%%i
 wsl bash "%WSL_DIR%start-claude-server-linux.sh"
+pause
