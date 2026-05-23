@@ -2,7 +2,7 @@
 
 A Chrome extension that embeds a live terminal in Chrome's side panel, powered by [ttyd](https://github.com/tsl0922/ttyd) and [tmux](https://github.com/tmux/tmux). You can send commands directly from the browser, select page elements to use as context, and connect to an AI coding agent (Claude Code or Codex CLI) instead of a plain shell.
 
-![Chrome Side Panel](https://placehold.co/800x400?text=Screenshot)
+![Chrome Side Panel](vibe-screenshot.png)
 
 ---
 
