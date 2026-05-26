@@ -32,8 +32,8 @@ if session_cmd:
 try:
     ttyd_process = subprocess.Popen(
         ttyd_cmd,
-        stdout=subprocess.DEVNULL,  # Suppresses standard output
-        stderr=subprocess.DEVNULL   # Suppresses error logs
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
     )
 except FileNotFoundError:
     print("Error: 'ttyd' command not found. Please ensure it is installed.")
@@ -42,7 +42,14 @@ except FileNotFoundError:
 # 2. Initialize and start the Python HTTPServer thread
 server = http.server.HTTPServer(('127.0.0.1', 7682), H)
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-ctx.load_cert_chain(CERT, KEY)
+try:
+    ctx.load_cert_chain(CERT, KEY)
+except (FileNotFoundError, ssl.SSLError) as e:
+    print(f"Error: could not load TLS certificate — {e}")
+    print(f"Expected cert: {CERT}")
+    print(f"Expected key:  {KEY}")
+    ttyd_process.terminate()
+    sys.exit(1)
 server.socket = ctx.wrap_socket(server.socket, server_side=True)
 
 server_thread = threading.Thread(target=server.serve_forever)
@@ -72,8 +79,12 @@ while True:
             print("All services stopped cleanly.")
             sys.exit(0)
             
-    except (KeyboardInterrupt, SystemExit):
-        # Fallback to catch Ctrl+C and still close ttyd cleanly
+    except (KeyboardInterrupt, SystemExit, EOFError):
+        # Fallback to catch Ctrl+C, EOFError (stdin closed), and still close cleanly
+        print("\nShutting down services...")
+        server.shutdown()
+        server.server_close()
         ttyd_process.terminate()
+        ttyd_process.wait()
         sys.exit(0)
 
