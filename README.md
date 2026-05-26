@@ -84,6 +84,20 @@ Run the setup script to check and optionally install missing dependencies:
 setup-server-windows.bat
 ```
 
+To install and authenticate Claude Code or Codex CLI inside WSL2 (Windows) or Linux:
+
+```bash
+# Claude Code
+./setup-claude-linux.sh       # Linux
+setup-claude-windows.bat      # Windows
+
+# Codex CLI
+./setup-codex-linux.sh        # Linux
+setup-codex-windows.bat       # Windows
+```
+
+These scripts detect if the tool is already installed and skip setup if so. If Node.js is missing it is installed automatically via nvm. Claude Code will launch an interactive login flow after install. Codex CLI will prompt for your OpenAI API key and save it to `~/.bashrc`.
+
 ---
 
 ## TLS Certificate
