@@ -6,11 +6,14 @@ echo Checking WSL2...
 
 wsl echo "ok" >nul 2>&1
 if errorlevel 1 (
-    echo WSL2 is not available or no distribution is installed.
+    echo WSL2 is not available or no Linux distribution is installed.
     echo.
-    echo To install WSL2 with Ubuntu, run in PowerShell as Administrator:
-    echo   wsl --install
-    echo   ^(then restart Windows and re-run this script^)
+    echo Before running this script, complete these steps manually:
+    echo   1. Open PowerShell as Administrator
+    echo   2. Run: wsl --install
+    echo   3. Restart Windows when prompted
+    echo   4. Open the Ubuntu app once to finish Linux setup
+    echo   5. Re-run this script
     echo.
     pause
     exit /b 1
