@@ -40,7 +40,8 @@ except FileNotFoundError:
     sys.exit(1)
 
 # 2. Initialize and start the Python HTTPServer thread
-server = http.server.HTTPServer(('127.0.0.1', 7682), H)
+# Bind to 0.0.0.0 so WSL2's localhost-forwarding proxy can reach it from Windows
+server = http.server.HTTPServer(('0.0.0.0', 7682), H)
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 try:
     ctx.load_cert_chain(CERT, KEY)
@@ -73,18 +74,24 @@ while True:
             
             # Orderly shutdown step 2: Terminate ttyd
             print("- Stopping ttyd...")
-            ttyd_process.terminate()  # Sends SIGTERM for a clean exit
-            ttyd_process.wait()       # Ensure the process has completely closed
-            
+            ttyd_process.terminate()
+            try:
+                ttyd_process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                ttyd_process.kill()
+
             print("All services stopped cleanly.")
             sys.exit(0)
-            
+
     except (KeyboardInterrupt, SystemExit, EOFError):
         # Fallback to catch Ctrl+C, EOFError (stdin closed), and still close cleanly
         print("\nShutting down services...")
         server.shutdown()
         server.server_close()
         ttyd_process.terminate()
-        ttyd_process.wait()
+        try:
+            ttyd_process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            ttyd_process.kill()
         sys.exit(0)
 

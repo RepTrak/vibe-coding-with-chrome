@@ -10,4 +10,8 @@ if errorlevel 1 (
 
 for /f "delims=" %%i in ('wsl wslpath "%~dp0"') do set WSL_DIR=%%i
 wsl bash "%WSL_DIR%setup-codex-linux.sh"
+if errorlevel 1 (
+    echo.
+    echo Setup did not complete successfully. Check the errors above.
+)
 pause
