@@ -22,7 +22,7 @@ detect_pkg_manager() {
 pkg_install_cmd() {
   local dep=$1 mgr=$2
   case $mgr in
-    apt)    echo "sudo apt-get install -y $dep" ;;
+    apt)    echo "sudo apt-get update -qq && sudo apt-get install -y $dep" ;;
     dnf)    echo "sudo dnf install -y $dep" ;;
     yum)    echo "sudo yum install -y $dep" ;;
     pacman) echo "sudo pacman -S --noconfirm $dep" ;;
@@ -31,29 +31,28 @@ pkg_install_cmd() {
   esac
 }
 
-# ttyd is in apt repos on Ubuntu 21.10+. For older Ubuntu (e.g. 20.04 in WSL2)
-# it falls back to snap. On Arch, prefer yay/paru then snap.
+# ttyd install strategy:
+#   apt (Ubuntu 21.10+): use apt. Older Ubuntu / any other distro: download
+#   the pre-built binary from GitHub releases — snap is NOT used because it
+#   requires systemd which is disabled in most WSL2 setups.
 ttyd_install_cmd() {
   local mgr=$1
+  local arch; arch=$(uname -m)
+  local binary_dl="curl -fsSL https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.${arch} -o /tmp/ttyd && sudo install /tmp/ttyd /usr/local/bin/ttyd"
+
   if [[ $mgr == "apt" ]]; then
-    # Check if ttyd is available in apt before committing to it
     if apt-cache show ttyd &>/dev/null 2>&1; then
-      echo "sudo apt-get install -y ttyd"
-    elif command -v snap &>/dev/null; then
-      echo "sudo snap install ttyd --classic"
+      echo "sudo apt-get update -qq && sudo apt-get install -y ttyd"
     else
-      echo ""
+      echo "$binary_dl"
     fi
   elif [[ $mgr == "pacman" ]]; then
     if command -v yay &>/dev/null; then echo "yay -S ttyd"
     elif command -v paru &>/dev/null; then echo "paru -S ttyd"
-    elif command -v snap &>/dev/null; then echo "sudo snap install ttyd --classic"
-    else echo ""
+    else echo "$binary_dl"
     fi
-  elif command -v snap &>/dev/null; then
-    echo "sudo snap install ttyd --classic"
   else
-    echo ""
+    echo "$binary_dl"
   fi
 }
 
@@ -112,12 +111,7 @@ for dep in "${MISSING[@]}"; do
       if command -v "$dep" &>/dev/null; then
         echo "  ${GREEN}[ok]  $dep installed successfully.${NC}"
       else
-        # snap installs may not be on PATH until the terminal is restarted
-        if [[ $cmd == *"snap"* ]]; then
-          echo "  ${YELLOW}snap install completed. If '$dep' is not found, restart your terminal and re-run this script.${NC}"
-        else
-          echo "  ${RED}Install may have failed. Try manually: $cmd${NC}"
-        fi
+        echo "  ${RED}Install may have failed. Try manually: $cmd${NC}"
       fi
     else
       echo "  Skipped. Run when ready:  $cmd"
