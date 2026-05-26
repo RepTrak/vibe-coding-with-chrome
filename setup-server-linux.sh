@@ -31,12 +31,19 @@ pkg_install_cmd() {
   esac
 }
 
-# ttyd is in apt repos on Ubuntu 21.10+; otherwise snap is the safest fallback.
-# On Arch, prefer yay/paru (AUR helpers) if available, then snap, then manual.
+# ttyd is in apt repos on Ubuntu 21.10+. For older Ubuntu (e.g. 20.04 in WSL2)
+# it falls back to snap. On Arch, prefer yay/paru then snap.
 ttyd_install_cmd() {
   local mgr=$1
   if [[ $mgr == "apt" ]]; then
-    echo "sudo apt-get install -y ttyd"
+    # Check if ttyd is available in apt before committing to it
+    if apt-cache show ttyd &>/dev/null 2>&1; then
+      echo "sudo apt-get install -y ttyd"
+    elif command -v snap &>/dev/null; then
+      echo "sudo snap install ttyd --classic"
+    else
+      echo ""
+    fi
   elif [[ $mgr == "pacman" ]]; then
     if command -v yay &>/dev/null; then echo "yay -S ttyd"
     elif command -v paru &>/dev/null; then echo "paru -S ttyd"
@@ -70,7 +77,11 @@ done
 echo ""
 
 if [[ ${#MISSING[@]} -eq 0 ]]; then
-  echo "${GREEN}All dependencies present. Run ./start-server-linux.sh to start.${NC}"
+  if grep -qi microsoft /proc/version 2>/dev/null; then
+    echo "${GREEN}All dependencies present. Run ${BOLD}start-server-windows.bat${NC}${GREEN} to start.${NC}"
+  else
+    echo "${GREEN}All dependencies present. Run ${BOLD}./start-server-linux.sh${NC}${GREEN} to start.${NC}"
+  fi
   echo ""
   exit 0
 fi
@@ -126,9 +137,17 @@ for dep in "${DEPS[@]}"; do
   command -v "$dep" &>/dev/null || ALL_OK=false
 done
 
-if [[ $ALL_OK == true ]]; then
-  echo "${GREEN}All dependencies installed. Run ./start-server-linux.sh to start.${NC}"
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  START_CMD="start-server-windows.bat"
+  SETUP_CMD="setup-server-windows.bat"
 else
-  echo "${YELLOW}Some dependencies are still missing. Re-run ./setup-server-linux.sh when ready.${NC}"
+  START_CMD="./start-server-linux.sh"
+  SETUP_CMD="./setup-server-linux.sh"
+fi
+
+if [[ $ALL_OK == true ]]; then
+  echo "${GREEN}All dependencies installed. Run ${BOLD}$START_CMD${NC}${GREEN} to start.${NC}"
+else
+  echo "${YELLOW}Some dependencies are still missing. Re-run ${BOLD}$SETUP_CMD${NC}${YELLOW} when ready.${NC}"
 fi
 echo ""
