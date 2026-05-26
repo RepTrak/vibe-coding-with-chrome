@@ -141,7 +141,9 @@ fi
 
 if [[ $ALL_OK == true ]]; then
   echo "${GREEN}All dependencies installed. Run ${BOLD}$START_CMD${NC}${GREEN} to start.${NC}"
+  echo ""
 else
   echo "${YELLOW}Some dependencies are still missing. Re-run ${BOLD}$SETUP_CMD${NC}${YELLOW} when ready.${NC}"
+  echo ""
+  exit 1
 fi
-echo ""

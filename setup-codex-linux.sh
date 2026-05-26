@@ -67,7 +67,7 @@ if [[ -n "$api_key" ]]; then
   if grep -q "OPENAI_API_KEY" ~/.bashrc 2>/dev/null; then
     echo "${YELLOW}OPENAI_API_KEY already exists in ~/.bashrc — update it manually if needed.${NC}"
   else
-    echo "export OPENAI_API_KEY=$api_key" >> ~/.bashrc
+    echo "export OPENAI_API_KEY=\"$api_key\"" >> ~/.bashrc
     echo "${GREEN}[ok]${NC}  API key saved to ~/.bashrc"
     echo "      Restart your terminal or run: source ~/.bashrc"
   fi
