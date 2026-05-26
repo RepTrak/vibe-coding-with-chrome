@@ -1,0 +1,10 @@
+# Force LF line endings for all text files — prevents CRLF breakage when
+# Windows users download or clone the repo (bash shebangs fail on \r\n).
+* text=auto eol=lf
+
+# Explicitly mark shell and Python scripts as LF
+*.sh    text eol=lf
+*.py    text eol=lf
+
+# Windows batch files are the only ones that legitimately need CRLF
+*.bat   text eol=crlf
