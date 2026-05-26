@@ -161,6 +161,8 @@ clear-server-session-windows.bat
 
 Note: `clear-server-session` will refuse to run while `vibe-server-start.py` is still running.
 
+On Windows, if you closed the CMD window without pressing `q + Enter`, use `stop-server-windows.bat` to force-kill the server processes before running `clear-server-session-windows.bat`.
+
 ---
 
 ## Windows (WSL2) Notes
