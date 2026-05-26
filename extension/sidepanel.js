@@ -28,6 +28,8 @@ const urlGo      = document.getElementById('url-go');
 const sendInput  = document.getElementById('send-input');
 const sendBtn    = document.getElementById('send-btn');
 const clearBtn     = document.getElementById('clear-btn');
+const certBanner   = document.getElementById('cert-banner');
+const certLink     = document.getElementById('cert-link');
 const configBtn    = document.getElementById('config-btn');
 const configDialog = document.getElementById('config-dialog');
 const configHostEl = document.getElementById('config-host');
@@ -61,6 +63,28 @@ function extractShortUrl(url) {
   const m = url.match(/^[^/]*\/\/(\/.+)/);
   return m ? m[1] : url;
 }
+
+// ── certificate check ────────────────────────────────────────────────────────
+
+certLink.addEventListener('click', () => {
+  chrome.tabs.create({ url: terminalBaseUrl() });
+});
+
+async function checkCertificate() {
+  try {
+    await fetch(terminalBaseUrl(), { mode: 'no-cors' });
+    if (certBanner.classList.contains('visible')) {
+      certBanner.classList.remove('visible');
+      reloadTerminal(buildUrl(themeSelect.value));
+    }
+  } catch {
+    certBanner.classList.add('visible');
+  }
+}
+
+// Poll every 3 seconds so the terminal reconnects automatically once the
+// user trusts the cert and returns to the extension
+setInterval(checkCertificate, 3000);
 
 // ── theme ────────────────────────────────────────────────────────────────────
 
@@ -104,6 +128,7 @@ requestAnimationFrame(() => {
   terminal.addEventListener('load', () => {
     nudgeResize(terminal);
     setTimeout(() => nudgeResize(terminal), 250);
+    checkCertificate();
   }, { once: true });
 });
 

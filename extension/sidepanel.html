@@ -148,6 +148,20 @@
     #send-input::placeholder { color: var(--ui-dim); }
     #send-input:focus { outline: none; border-color: var(--ui-accent); }
 
+    /* ── cert banner ── */
+    #cert-banner {
+      display: none;
+      padding: 7px 10px;
+      background: #3a1f00;
+      color: #ffb347;
+      font-size: 11px;
+      text-align: center;
+      flex-shrink: 0;
+      border-bottom: 1px solid #7a4400;
+    }
+    #cert-banner.visible { display: block; }
+    #cert-banner a { color: #ffd080; cursor: pointer; }
+
     #terminal-wrap { flex: 1; position: relative; }
     #terminal-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
 
@@ -207,6 +221,11 @@
   <div class="bar" id="send-bar">
     <textarea id="send-input" rows="3" placeholder="Send to terminal… (Shift+Enter for newline)"></textarea>
     <button class="btn" id="send-btn">Send</button>
+  </div>
+
+  <!-- cert banner (hidden until connection failure detected) -->
+  <div id="cert-banner">
+    Terminal blocked — <a id="cert-link">click here to trust the certificate</a>, then the terminal will reconnect automatically.
   </div>
 
   <div id="terminal-wrap">
