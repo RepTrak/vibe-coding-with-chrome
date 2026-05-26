@@ -12,7 +12,7 @@ if errorlevel 1 (
     echo   1. Open PowerShell as Administrator
     echo   2. Run: wsl --install
     echo   3. Restart Windows when prompted
-    echo   4. Open the Ubuntu app once to finish Linux setup
+    echo   4. Open the Ubuntu app once, set a username/password, then close it
     echo   5. Re-run this script
     echo.
     pause

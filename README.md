@@ -174,7 +174,7 @@ On Windows, if you closed the CMD window without pressing `q + Enter`, use `stop
    wsl --install
    ```
 2. **Restart Windows** when prompted
-3. Open the **Ubuntu** app once to complete the initial Linux user setup
+3. Open the **Ubuntu** app once, create a Linux username and password when prompted, then close it — it does not need to stay running
 4. Then run `setup-server-windows.bat` to check and install the remaining dependencies
 
 The `.bat` scripts are thin wrappers that call the corresponding `-linux.sh` scripts inside your WSL2 distro. WSL2 automatically forwards `localhost` ports to Windows, so the Chrome extension connects to `https://localhost:7681` and `https://localhost:7682` without any extra network configuration. Claude Code and Codex CLI must be installed **inside WSL2**, not on Windows.
