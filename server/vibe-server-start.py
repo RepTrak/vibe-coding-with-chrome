@@ -25,6 +25,10 @@ CERT      = os.path.join(SCRIPT_DIR, "cert.pem")
 KEY       = os.path.join(SCRIPT_DIR, "key.pem")
 WORKSPACE = os.path.normpath(os.path.join(SCRIPT_DIR, '..', 'workspace'))
 os.makedirs(WORKSPACE, exist_ok=True)
+# Give workspace its own .git so agents don't walk up and find the
+# terminal-in-chrome repo instead.
+if not os.path.exists(os.path.join(WORKSPACE, '.git')):
+    subprocess.run(['git', 'init', WORKSPACE], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 session_cmd = sys.argv[1:] if len(sys.argv) > 1 else []
 ttyd_cmd = ["ttyd", "-W", "-S", "-C", CERT, "-K", KEY, "tmux", "new-session", "-A", "-s", "main", "-c", WORKSPACE]
