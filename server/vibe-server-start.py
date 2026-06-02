@@ -8,10 +8,13 @@ import os
 class H(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         cmd = self.rfile.read(int(self.headers['Content-Length'])).decode()
-        if '\n' in cmd:
-            subprocess.run(['tmux', 'send-keys', '-t', 'main', '\x1b[200~' + cmd + '\x1b[201~'])
-        else:
-            subprocess.run(['tmux', 'send-keys', '-t', 'main', cmd])
+        # Wrap multiline content in bracketed-paste to prevent intermediate
+        # newlines from triggering Enter mid-paste.
+        payload = ('\x1b[200~' + cmd + '\x1b[201~') if '\n' in cmd else cmd
+        # Pipe through stdin via load-buffer/paste-buffer instead of passing
+        # as a send-keys argument — avoids OS exec ARG_MAX limits on long messages.
+        subprocess.run(['tmux', 'load-buffer', '-'], input=payload.encode())
+        subprocess.run(['tmux', 'paste-buffer', '-t', 'main'])
         subprocess.run(['tmux', 'send-keys', '-t', 'main', 'Enter'])
         self.send_response(200)
         self.end_headers()
