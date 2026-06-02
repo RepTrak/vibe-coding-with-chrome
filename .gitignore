@@ -2,6 +2,11 @@
 .claude/
 .codex/
 
+# Workspace — user projects live here; track only the scaffolding
+workspace/*
+!workspace/.gitkeep
+!workspace/README.md
+
 # Python
 __pycache__/
 *.pyc

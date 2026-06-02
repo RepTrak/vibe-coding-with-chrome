@@ -21,11 +21,13 @@ class H(http.server.BaseHTTPRequestHandler):
 
 # 1. Start ttyd in the background and suppress all screen output
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-CERT = os.path.join(SCRIPT_DIR, "cert.pem")
-KEY  = os.path.join(SCRIPT_DIR, "key.pem")
+CERT      = os.path.join(SCRIPT_DIR, "cert.pem")
+KEY       = os.path.join(SCRIPT_DIR, "key.pem")
+WORKSPACE = os.path.normpath(os.path.join(SCRIPT_DIR, '..', 'workspace'))
+os.makedirs(WORKSPACE, exist_ok=True)
 
 session_cmd = sys.argv[1:] if len(sys.argv) > 1 else []
-ttyd_cmd = ["ttyd", "-W", "-S", "-C", CERT, "-K", KEY, "tmux", "new-session", "-A", "-s", "main"]
+ttyd_cmd = ["ttyd", "-W", "-S", "-C", CERT, "-K", KEY, "tmux", "new-session", "-A", "-s", "main", "-c", WORKSPACE]
 if session_cmd:
     ttyd_cmd.extend(session_cmd)
 
