@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")"
 
+# Source nvm so claude is in PATH even in non-interactive shells
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 if ! command -v python3 &>/dev/null; then
   echo "python3 is not installed. Run the setup script first."
   exit 1
