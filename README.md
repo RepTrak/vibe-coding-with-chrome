@@ -153,6 +153,7 @@ All scripts must be run from the **project root**. Press `q + Enter` to stop the
 - **Open URL** — open any URL in a new tab
 - **Themes** — Dark, Light, Solarized Dark, Dracula, One Dark
 - **Config** — click the gear icon to change the host (default: `localhost`) if running the server on a different machine
+- **Agent confirmations** — Claude Code and Codex CLI occasionally pause and show a confirmation prompt before running a command. When this happens, **click inside the terminal panel to focus it**, then use the **arrow keys** and **Enter** to accept or reject. The Send box does not forward arrow-key input, so you must interact directly in the terminal
 
 ---
 
@@ -185,7 +186,7 @@ On Windows, if you closed the CMD window without pressing `q + Enter`, use `stop
 
 1. Open **PowerShell as Administrator** and run:
    ```
-   wsl --install
+   wsl --install -d Ubuntu
    ```
 2. **Restart Windows** when prompted
 3. Open the **Ubuntu** app once, create a Linux username and password when prompted, then close it — it does not need to stay running
