@@ -21,7 +21,7 @@ if errorlevel 1 (
 echo [ok]  WSL2 available
 echo.
 
-for /f "delims=" %%i in ('wsl wslpath "%~dp0"') do set WSL_DIR=%%i
+for /f "delims=" %%i in ('wsl bash -c "wslpath '%~dp0' | tr -d '\r'"') do set WSL_DIR=%%i
 wsl sed -i "s/\r//" "%WSL_DIR%setup-server-linux.sh" >nul 2>&1
 wsl bash "%WSL_DIR%setup-server-linux.sh"
 if errorlevel 1 (
